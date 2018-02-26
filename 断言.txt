@@ -1,0 +1,47 @@
+/*******************************************************************************
+*适用平台：STM32开发平台 keil
+*文档说明: 为了提高开发效率而设置的一些约定
+*创建人员: 
+*创建日期: 2016-03-18
+*******************************************************************************/
+1. 在必要的程序接口增加断言(assert)机制
+
+为了提高程序开发效率：
+1. 编码过程中，在DEBUG阶段，，在keil中，Options的User最下面的Start Debugging勾上；
+2. 编码完成后，在RELEASE阶段，Start Debugging去掉。
+去掉就行了
+
+作用：
+1. 断言可以用来检查传给函数参数的合法性
+2. 一个断言一般只用来检查一个条件，便于分析程序
+3. 断言前后单独空行分开
+4. 断言只是用来检查程序的逻辑正确性，不能代替条件替换（重点区分）
+5. 断言比printf语句这种形式的打印好使~~~~
+6. 断言参数可以是函数调用,但是函数返回值要是真假,如assert(sort())
+
+
+
+/**
+  * @brief  This function handles Hard Fault exception.
+  * @param  None
+  * @retval None
+  */
+void HardFault_Handler(void)
+{
+  /* Go to infinite loop when Hard Fault exception occurs */
+  while (1)
+  {
+  }
+}
+
+
+默认的HardFault_Handler处理方法不是B .这样的死循环么?楼主将它改成BX LR直接返回的形式。然后在这条语句打个断点，一旦在断点中停下来，说明出错了，然后再返回，就可以返回到出错的位置的下一条语句那儿
+__asm void wait()
+{
+BX lr
+}
+void HardFault_Handler(void)
+{
+/* Go to infinite loop when Hard Fault exception occurs */
+wait();
+}

@@ -1,0 +1,126 @@
+0、	http://nginx.org/en/download.html
+
+1、需要一个内核为Linux 2.6及以上版本的操作系统，
+   为什么？
+	 因为Linux 2.6及以上内核才支持epoll，而在Linux上使用select或poll来解决事件的多路
+	 复用，是无法解决高并发压力问题的。
+
+2、使用ngnix必备的软件
+	（1）GCC编译器
+	（2）PCRE库
+	 (3) zlib库
+	（4）OpenSSL库
+	以上4个库只是完成Web服务器最基本功能所必须的。
+	
+	详细安装不走如下所示（参考文档————http://www.cnblogs.com/badboyf/p/6422547.html）：
+	
+	gcc、g++依赖库
+		apt-get install build-essential
+		apt-get install libtool
+		
+	安装 pcre依赖库（http://www.pcre.org/）
+		sudo apt-get install libpcre3 libpcre3-dev
+		或源码安装：
+			cd /usr/local/src
+			wget ftp://ftp.csx.cam.ac.uk/pub/software/programming/pcre/pcre-8.40.tar.gz 
+			tar -zxvf pcre-8.37.tar.gz
+			cd pcre-8.34
+			./configure
+			make
+			make install
+
+	安装 zlib依赖库（http://www.zlib.net）
+		apt-get install zlib1g-dev
+		或源码安装
+			cd /usr/local/src
+			wget http://zlib.net/zlib-1.2.8.tar.gz
+			sudo tar -zxvf zlib-1.2.8.tar.gz
+			cd zlib-1.2.8
+			sudo ./configure
+			sudo make
+			sudo make install
+
+	安装ssl依赖库(ubuntu16.04 LTS 已经安装过了)
+		apt-get install openssl
+	
+	安装nginx
+		cd /usr/local/src
+		wget http://nginx.org/download/nginx-1.4.2.tar.gz
+		tar -zxvf nginx-1.4.2.tar.gz
+		cd nginx-1.4.2
+	 
+		./configure --sbin-path=/usr/local/nginx/nginx \
+		--conf-path=/usr/local/nginx/nginx.conf \
+		--pid-path=/usr/local/nginx/nginx.pid \
+		--with-http_ssl_module \
+		--with-pcre=/opt/app/openet/oetal1/chenhe/pcre-8.37 \
+		--with-zlib=/opt/app/openet/oetal1/chenhe/zlib-1.2.8 \
+		--with-openssl=/opt/app/openet/oetal1/chenhe/openssl-1.0.1t
+	 
+		make
+		make install
+
+				configure命令做了大量的“幕后”工作，包括检测操作系统内核和已经安装的软件，参数的解析，中间目
+		录的生成以及根据各种参数生成一些C源码文件、Makefile文件等。
+				make命令根据configure命令生成的Makefile文件编译Nginx工程，并生成目标文件、最终的二进制文件。
+				make install命令根据configure执行时的参数将Nginx部署到指定的安装目录，包括相关目录的建立和二
+		进制文件、配置文件的复制。
+
+		附部分注释：
+		--prefix=path    定义一个目录，存放服务器上的文件 ，也就是nginx的安装目录。默认使用 /usr/local/nginx。
+		--sbin-path=path 设置nginx的可执行文件的路径，默认为  prefix/sbin/nginx.
+		--conf-path=path  设置在nginx.conf配置文件的路径。nginx允许使用不同的配置文件启动，通过命令行中的-c选项。默认为prefix/conf/nginx.conf.
+		--pid-path=path  设置nginx.pid文件，将存储的主进程的进程号。安装完成后，可以随时改变的文件名 ， 在nginx.conf配置文件中使用 PID指令。默认情况下，文件名 为prefix/logs/nginx.pid.
+		--error-log-path=path 设置主错误，警告，和诊断文件的名称。安装完成后，可以随时改变的文件名 ，在nginx.conf配置文件中 使用 的error_log指令。默认情况下，文件名 为prefix/logs/error.log.
+		--http-log-path=path  设置主请求的HTTP服务器的日志文件的名称。安装完成后，可以随时改变的文件名 ，在nginx.conf配置文件中 使用 的access_log指令。默认情况下，文件名 为prefix/logs/access.log.
+		--user=name  设置nginx工作进程的用户。安装完成后，可以随时更改的名称在nginx.conf配置文件中 使用的 user指令。默认的用户名是nobody。
+		--group=name  设置nginx工作进程的用户组。安装完成后，可以随时更改的名称在nginx.conf配置文件中 使用的 user指令。默认的为非特权用户。
+		--with-select_module--without-select_module 启用或禁用构建一个模块来允许服务器使用select()方法。该模块将自动建立，如果平台不支持的kqueue，epoll，rtsig或/dev/poll。
+		--with-poll_module--without-poll_module 启用或禁用构建一个模块来允许服务器使用poll()方法。该模块将自动建立，如果平台不支持的kqueue，epoll，rtsig或/dev/poll。
+		--without-http_gzip_module — 不编译压缩的HTTP服务器的响应模块。编译并运行此模块需要zlib库。
+		--without-http_rewrite_module  不编译重写模块。编译并运行此模块需要PCRE库支持。
+		--without-http_proxy_module — 不编译http_proxy模块。
+		--with-http_ssl_module — 使用https协议模块。默认情况下，该模块没有被构建。建立并运行此模块的OpenSSL库是必需的。
+		--with-pcre=path — 设置PCRE库的源码路径。PCRE库的源码（版本4.4 - 8.30）需要从PCRE网站下载并解压。其余的工作是Nginx的./ configure和make来完成。正则表达式使用在location指令和 ngx_http_rewrite_module 模块中。
+		--with-pcre-jit —编译PCRE包含“just-in-time compilation”（1.1.12中， pcre_jit指令）。
+		--with-zlib=path —设置的zlib库的源码路径。要下载从 zlib（版本1.1.3 - 1.2.5）的并解压。其余的工作是Nginx的./ configure和make完成。ngx_http_gzip_module模块需要使用zlib 。
+		--with-cc-opt=parameters — 设置额外的参数将被添加到CFLAGS变量。例如,当你在FreeBSD上使用PCRE库时需要使用:--with-cc-opt="-I /usr/local/include。.如需要需要增加 select()支持的文件数量:--with-cc-opt="-D FD_SETSIZE=2048".
+		--with-ld-opt=parameters —设置附加的参数，将用于在链接期间。例如，当在FreeBSD下使用该系统的PCRE库,应指定:--with-ld-opt="-L /usr/local/lib".
+	 
+
+	启动、停止、重载配置、测试配置文件是否正确
+		sudo /usr/local/nginx    #启动
+		或
+		sudo /usr/local/nginx -c /usr/local/nginx.conf
+
+		sudo /usr/local/nginx -t #检测配置文件是否正确 
+		sudo /usr/local/nginx -s stop #停止 
+		sudo /usr/local/nginx -s reload #重载配置文件
+		
+		
+3、磁盘目录
+		见书本
+		
+
+4、Linux内核参数的优化
+	修改文件  如下，并执行：sudo sysctl -p （即：/sbin/sysctl -p）
+		fs.file-max = 999999 
+		net.ipv4.tcp_tw_reuse = 1
+		net.ipv4.tcp_keepalive_time = 600
+		net.ipv4.tcp_fin_timeout = 30
+		net.ipv4.tcp_max_tw_buckets = 5000
+		net.ipv4.ip_local_port_range = 1024    61000
+		net.ipv4.tcp_rmem = 4096 32768 262142
+		net.ipv4.tcp_wmem = 4096 32768 262142
+		net.core.netdev_max_backlog = 8096
+		net.core.rmem_default = 262144
+		net.core.wmem_default = 262144
+		net.core.rmem_max = 2097152
+		net.core.wmem_max = 2097152
+		net.ipv4.tcp_syncookies = 1
+		# net.ipv4.tcp_max_syn.backlog=1024 #暂时注释掉 执行不成功
+	
+	最后一句没有执行成功，暂时未解决：sysctl: cannot stat /proc/sys/net/ipv4/tcp_max_syn/backlog: 没有那个文件或目录
+
+
+

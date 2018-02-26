@@ -1,0 +1,9 @@
+
+	我下载的ngnix版本和安装目录如下：
+		czha@ubuntu:/usr/local/src/nginx-1.11.10$ 
+
+1、编译安装Ngnix
+	进入nginx-1.11.10目录
+	 ./configure 
+		make
+		make install

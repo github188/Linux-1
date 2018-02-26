@@ -1,0 +1,16 @@
+
+1、mv
+	格式：mv [选项(option)] 源文件或目录 目标文件或目录
+	mv  src  /bin/usr/
+	延伸一下：mv  /usr/lib/*  /dst
+	
+	
+2、rm
+	删除目录以及其下所有文件：rm -rf   目录名字
+	-r 就是向下递归，不管有多少级目录，一并删除
+	-f 就是直接强行删除，不作任何提示的意思
+
+
+3、find
+  func：查找文件和目录。
+	exam: 比如想查找types.h这个文件：find -name types.h
