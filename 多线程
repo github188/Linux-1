@@ -10,3 +10,17 @@ undefined reference to 'pthread_join'
     在编译中要加 -lpthread参数
     gcc thread.c -o thread -lpthread
     thread.c为你些的源文件，不要忘了加上头文件#include<pthread.h>
+
+
+
+linux线程资源释放 
+      http://blog.163.com/d409183529@126/blog/static/112949872013441134296/
+pthread_create创建子线程时，默认线程状态为PTHREAD_CREATE_JOINABLE，即子线程在执行完之后（即使调用pthread_exit()退出），其所占用资源不会立即释放，而是会等待主线程的pthread_join(id,)之后才会释放资源。而在一些需要频繁开启线程的特殊情况下，此种机制就会成为很大隐患，因为，你在查看其占用资源状况时，会发现很恐怖的增长数据，最终程序会死掉。
+
+能不能在创建线程之后，就让其的资源释放与主线程脱离，而被直接回收呢？
+
+ 解决方法有三个:
+ 1.线程里面调用 pthread_detach(pthread_self()) 这个方法最简单，释放线程所占用的内存资源（线程内核对象task_struct和线程内核堆栈）。
+ 2.在创建线程的设置PTHREAD_CREATE_DETACHED属性
+ 3.创建线程后用 pthread_join() 一直等待子线程结束
+
