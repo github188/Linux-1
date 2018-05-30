@@ -1,0 +1,11 @@
+char szChanName[50];
+
+memset(szChanName, 0, sizeof(szChanName));
+snprintf(szChanName, sizeof(szChanName), pStr);
+
+
+如果pStr中带有格式符，那么后面还要接上指定格式的内容，如：
+pStr="which %d"
+snprintf(szChanName, sizeof(szChanName), pStr, 3);
+
+szChanName = {'w', 'h', 'i', 'c', 'h', '3', 0, 0, .....};
